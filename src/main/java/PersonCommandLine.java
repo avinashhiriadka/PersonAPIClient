@@ -23,63 +23,60 @@ public class PersonCommandLine {
     public static void main(String[] args) throws Exception{
 
         StringBuffer json = new StringBuffer();
+        Map<String, String> headers = new LinkedHashMap<String, String>();
 
-        if(!args[0].equals("list")){
-            File file = new File(args[0]);
-            BufferedReader br = new BufferedReader(new FileReader(file));
+        try {
+           if (!args[0].equals("list")) {
+               File file = new File(args[0]);
+               BufferedReader br = new BufferedReader(new FileReader(file));
 
-            String line;
-            while((line = br.readLine()) != null)
-                json.append(line);
-        }
+               String line;
+               while ((line = br.readLine()) != null)
+                   json.append(line);
+           } else {
+               String url = "http://localhost:8080/persons/findAll";
+               RestResponse response = performGetRequest(url, headers);
+               System.out.println("Http status code after get :" + response.getStatusCode());
 
-            Map<String, String> headers = new LinkedHashMap<String, String>();
-            headers.put("Accept", "application/json");
-            headers.put("Content-Type", "application/json");
+               if (response.getStatusCode() == HttpStatus.SC_OK) {
+                   System.out.println("The following persons are in DB: " + response.getResponseBody());
+               }
+               System.exit(0);
+           }
 
-        if(args[1].equals("add")){
-            String url = "http://localhost:8080/persons/add";
-            RestResponse response = preformPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
-            System.out.println("Http status code after post :" + response.getStatusCode());
-            if(response.getStatusCode() == HttpStatus.SC_CREATED){
-                System.out.println("Successfully added the following persons: " + response.getResponseBody());
-            }
-        }
+           headers.put("Accept", "application/json");
+           headers.put("Content-Type", "application/json");
 
-        else if(args[0].equals("list")){
-            String url = "http://localhost:8080/persons/findAll";
-            RestResponse response = performGetRequest(url, headers);
-            System.out.println("Http status code after get :" + response.getStatusCode());
+           if (args[1].equals("add")) {
+               String url = "http://localhost:8080/persons/add";
+               RestResponse response = preformPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
+               System.out.println("Http status code after post :" + response.getStatusCode());
+               if (response.getStatusCode() == HttpStatus.SC_CREATED) {
+                   System.out.println("Successfully added the following persons: " + response.getResponseBody());
+               }
+           } else if (args[1].equals("delete")) {
+               String url = "http://localhost:8080/persons/delete";
+               RestResponse response = preformPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
+               System.out.println("Http status code after post :" + response.getStatusCode());
 
-            if(response.getStatusCode() == HttpStatus.SC_OK){
-                System.out.println("The following persons are in DB: " + response.getResponseBody());
-            }
+               if (response.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+                   System.out.println("The following persons are deleted: " + response.getResponseBody());
+               }
 
-        }
+           } else if (args[1].equals("update")) {
+               String url = "http://localhost:8080/persons/update";
+               RestResponse response = preformPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
+               System.out.println("Http status code after post :" + response.getStatusCode());
 
-        else if(args[1].equals("delete")){
-            String url = "http://localhost:8080/persons/findAll";
-            RestResponse response = preformPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
-            System.out.println("Http status code after post :" + response.getStatusCode());
-
-            if(response.getStatusCode() == HttpStatus.SC_ACCEPTED){
-                System.out.println("The following persons are deleted: " + response.getResponseBody());
-            }
-
-        }
-
-        else if(args[1].equals("update")){
-            String url = "http://localhost:8080/persons/update";
-            RestResponse response = preformPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
-            System.out.println("Http status code after post :" + response.getStatusCode());
-
-            if(response.getStatusCode() == HttpStatus.SC_ACCEPTED){
-                System.out.println("The following persons are updated: " + response.getResponseBody());
-            }
-        }
-        else {
-            System.out.println("Incorrect arguments used to run the program ");
-        }
+               if (response.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+                   System.out.println("The following persons are updated: " + response.getResponseBody());
+               }
+           } else {
+               System.out.println("Please use only add, delete, update or list options ");
+           }
+       }catch(java.lang.ArrayIndexOutOfBoundsException ex){
+           System.out.println("Incorrect arguments used to run the program ");
+       }
     }
 
     private static RestResponse preformPostRequest(String url, String body, ContentType applicationJson, Map<String, String> headers) {

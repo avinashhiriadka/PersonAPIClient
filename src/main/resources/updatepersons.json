@@ -1,0 +1,10 @@
+{
+  "person": [{
+    "first_name" : "John",
+    "last_name" : "Wick",
+    "age" : 39,
+    "favourite_colour" : "yellow",
+    "hobby" : ["shopping", "football"]
+  }
+ ]
+}

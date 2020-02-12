@@ -5,6 +5,20 @@
     "age" : 29,
     "favourite_colour" : "red",
     "hobby" : ["shopping", "football"]
-  }
+  },
+    {
+      "first_name" : "Jack",
+      "last_name" : "Reacher",
+      "age" : 30,
+      "favourite_colour" : "blue",
+      "hobby" : ["cricket", "football"]
+    },
+    {
+      "first_name" : "Stephen",
+      "last_name" : "King",
+      "age" : 35,
+      "favourite_colour" : "yellow",
+      "hobby" : ["cricket", "food"]
+    }
     ]
 }
