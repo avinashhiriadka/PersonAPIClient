@@ -3,6 +3,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -20,13 +21,17 @@ import java.util.Map;
 public class PersonCommandLine {
 
     public static void main(String[] args) throws Exception{
-        File file = new File(args[0]);
-        BufferedReader br = new BufferedReader(new FileReader(file));
 
         StringBuffer json = new StringBuffer();
-        String line;
-        while((line = br.readLine()) != null)
-            json.append(line);
+
+        if(!args[0].equals("list")){
+            File file = new File(args[0]);
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            String line;
+            while((line = br.readLine()) != null)
+                json.append(line);
+        }
 
             Map<String, String> headers = new LinkedHashMap<String, String>();
             headers.put("Accept", "application/json");
@@ -39,6 +44,41 @@ public class PersonCommandLine {
             if(response.getStatusCode() == HttpStatus.SC_CREATED){
                 System.out.println("Successfully added the following persons: " + response.getResponseBody());
             }
+        }
+
+        else if(args[0].equals("list")){
+            String url = "http://localhost:8080/persons/findAll";
+            RestResponse response = performGetRequest(url, headers);
+            System.out.println("Http status code after get :" + response.getStatusCode());
+
+            if(response.getStatusCode() == HttpStatus.SC_OK){
+                System.out.println("The following persons are in DB: " + response.getResponseBody());
+            }
+
+        }
+
+        else if(args[1].equals("delete")){
+            String url = "http://localhost:8080/persons/findAll";
+            RestResponse response = preformPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
+            System.out.println("Http status code after post :" + response.getStatusCode());
+
+            if(response.getStatusCode() == HttpStatus.SC_ACCEPTED){
+                System.out.println("The following persons are deleted: " + response.getResponseBody());
+            }
+
+        }
+
+        else if(args[1].equals("update")){
+            String url = "http://localhost:8080/persons/update";
+            RestResponse response = preformPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
+            System.out.println("Http status code after post :" + response.getStatusCode());
+
+            if(response.getStatusCode() == HttpStatus.SC_ACCEPTED){
+                System.out.println("The following persons are updated: " + response.getResponseBody());
+            }
+        }
+        else {
+            System.out.println("Incorrect arguments used to run the program ");
         }
     }
 
@@ -66,7 +106,21 @@ public class PersonCommandLine {
         }
     }
 
+    private static RestResponse performGetRequest(String url, Map<String, String> headers) {
+        HttpGet get = new HttpGet(url);
+        CloseableHttpResponse response = null;
+        try{
+            CloseableHttpClient client = HttpClientBuilder.create().build();
+            response = client.execute(get);
+            ResponseHandler<String> responseBody = new BasicResponseHandler();
+            return new RestResponse(response.getStatusLine().getStatusCode(), responseBody.handleResponse(response));
+        }catch(Exception e){
+            if(e instanceof HttpResponseException)
+                return new RestResponse(response.getStatusLine().getStatusCode(),e.getMessage());
+            throw new RuntimeException(e.getMessage(), e);
 
+        }
+    }
 }
 
 
