@@ -1,8 +1,8 @@
 This is the command line client used to test the Person RestAPI webservice and should be
-run after the API is installed and running. 
+run after the API is installed and running. Please note that the client connects to the API running on port 8080 on the same server. If the host or port is different then you may need to modify the url string in the code. 
 1. Clone the GIT repo into the server where Java and Maven is installed using the command:
 git clone https://github.com/avinashhiriadka/PersonAPIClient.git
-2. cd PersonAPIClient
+2. cd PersonAPIClient. Set JAVA_HOME path variable to the Java installation directory if not already set.
 3. Run the maven command to build the client
 mvn clean package
 4. This should create a target directory with the classes and jar files
