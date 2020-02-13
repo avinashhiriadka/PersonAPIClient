@@ -1,10 +1,17 @@
 {
   "person": [{
-    "first_name" : "John",
-    "last_name" : "Wick",
+    "first_name" : "Jack",
+    "last_name" : "Reacher",
     "age" : 39,
     "favourite_colour" : "yellow",
-    "hobby" : ["shopping", "football"]
-  }
+    "hobby" : ["cricket", "food"]
+  },
+    {
+      "first_name" : "John",
+      "last_name" : "Wick",
+      "age" : 30,
+      "favourite_colour" : "white",
+      "hobby" : ["shopping", "football"]
+    }
  ]
 }

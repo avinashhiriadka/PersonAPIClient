@@ -49,14 +49,14 @@ public class PersonCommandLine {
 
            if (args[1].equals("add")) {
                String url = "http://localhost:8080/persons/add";
-               RestResponse response = preformPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
+               RestResponse response = performPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
                System.out.println("Http status code after post :" + response.getStatusCode());
                if (response.getStatusCode() == HttpStatus.SC_CREATED) {
                    System.out.println("Successfully added the following persons: " + response.getResponseBody());
                }
            } else if (args[1].equals("delete")) {
                String url = "http://localhost:8080/persons/delete";
-               RestResponse response = preformPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
+               RestResponse response = performPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
                System.out.println("Http status code after post :" + response.getStatusCode());
 
                if (response.getStatusCode() == HttpStatus.SC_ACCEPTED) {
@@ -65,7 +65,7 @@ public class PersonCommandLine {
 
            } else if (args[1].equals("update")) {
                String url = "http://localhost:8080/persons/update";
-               RestResponse response = preformPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
+               RestResponse response = performPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
                System.out.println("Http status code after post :" + response.getStatusCode());
 
                if (response.getStatusCode() == HttpStatus.SC_ACCEPTED) {
@@ -79,7 +79,7 @@ public class PersonCommandLine {
        }
     }
 
-    private static RestResponse preformPostRequest(String url, String body, ContentType applicationJson, Map<String, String> headers) {
+    private static RestResponse performPostRequest(String url, String body, ContentType applicationJson, Map<String, String> headers) {
         HttpPost post = new HttpPost(url);
         CloseableHttpResponse response = null;
         if(headers != null) {
