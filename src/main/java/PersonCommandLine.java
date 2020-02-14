@@ -14,9 +14,11 @@ import org.apache.http.message.BasicHeader;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class PersonCommandLine {
 
@@ -24,6 +26,13 @@ public class PersonCommandLine {
 
         StringBuffer json = new StringBuffer();
         Map<String, String> headers = new LinkedHashMap<String, String>();
+
+        //String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+        String appConfigPath = "application.properties";
+        Properties prop = new Properties();
+        prop.load(new FileInputStream("src/main/resources/application.properties"));
+        String baseUrl = prop.getProperty("person.api.base.url");
+        System.out.println("Base url is: " + baseUrl);
 
         try {
            if (!args[0].equals("list")) {
@@ -34,7 +43,7 @@ public class PersonCommandLine {
                while ((line = br.readLine()) != null)
                    json.append(line);
            } else {
-               String url = "http://localhost:8080/persons/findAll";
+               String url = baseUrl + "/persons/findAll";
                RestResponse response = performGetRequest(url, headers);
                System.out.println("Http status code after get :" + response.getStatusCode());
 
@@ -48,14 +57,14 @@ public class PersonCommandLine {
            headers.put("Content-Type", "application/json");
 
            if (args[1].equals("add")) {
-               String url = "http://localhost:8080/persons/add";
+               String url = baseUrl + "/persons/add";
                RestResponse response = performPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
                System.out.println("Http status code after post :" + response.getStatusCode());
                if (response.getStatusCode() == HttpStatus.SC_CREATED) {
                    System.out.println("Successfully added the following persons: " + response.getResponseBody());
                }
            } else if (args[1].equals("delete")) {
-               String url = "http://localhost:8080/persons/delete";
+               String url = baseUrl + "/persons/delete";
                RestResponse response = performPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
                System.out.println("Http status code after post :" + response.getStatusCode());
 
@@ -64,7 +73,7 @@ public class PersonCommandLine {
                }
 
            } else if (args[1].equals("update")) {
-               String url = "http://localhost:8080/persons/update";
+               String url = baseUrl + "/persons/update";
                RestResponse response = performPostRequest(url, json.toString(), ContentType.APPLICATION_JSON, headers);
                System.out.println("Http status code after post :" + response.getStatusCode());
 
